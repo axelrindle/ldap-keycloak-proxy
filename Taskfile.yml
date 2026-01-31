@@ -1,0 +1,53 @@
+version: '3'
+
+vars:
+  OUTPUT_DIRECTORY: dist
+  OUTPUT_FILE_NAME: ldap-keycloak-proxy
+  OUTPUT_FILE_SUFFIX:
+  APP_PACKAGE:
+    sh: cat go.mod | head -n1 | cut -d\  -f2
+  APP_VERSION:
+    sh: git describe --tags --always --abbrev=0 || echo "0.0.0"
+  APP_COMMIT_HASH:
+    sh: git rev-parse --short HEAD || echo "abcdef1234567890"
+  APP_BUILD_TIMESTAMP:
+    sh: date '+%Y-%m-%dT%H:%M:%S'
+
+tasks:
+  default:
+    deps:
+      - start
+
+  clean:
+    cmd: rm -rf "{{.OUTPUT_DIRECTORY}}/"
+    silent: true
+
+  build:
+    vars:
+      ABS: "{{.OUTPUT_DIRECTORY}}/{{.OUTPUT_FILE_NAME}}{{.OUTPUT_FILE_SUFFIX}}"
+      LDFLAGS: "-X 'main.Version={{.APP_VERSION}}' -X 'main.CommitHash={{.APP_COMMIT_HASH}}' -X 'main.BuildTimestamp={{.APP_BUILD_TIMESTAMP}}'"
+    sources:
+      - "**/*.go"
+    generates:
+      - "{{.ABS}}"
+    env:
+      GOOS: "{{.GOOS}}"
+    cmds:
+      - |
+        go build -v \
+          -ldflags="-w -s {{.LDFLAGS}}" \
+          -o "{{.ABS}}"
+      - du -sh "{{.ABS}}"
+
+  test:
+    cmd: go test -v -cover -coverprofile=coverage.out ./...
+
+  start:
+    cmd: watchexec --clear --restart -e go -w .env -- go run .
+
+  pkg:docker:
+    cmd: docker build . -t ldap-keycloak-proxy
+    deps:
+      - task: build
+        vars:
+          GOOS: linux

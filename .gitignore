@@ -1,0 +1,5 @@
+.task
+dist
+
+.env
+.DS_Store

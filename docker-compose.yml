@@ -1,0 +1,8 @@
+services:
+  ldap:
+    image: ldap-keycloak-proxy
+    build: .
+    ports:
+      - 1337:1337/tcp
+    env_file:
+      - .env
