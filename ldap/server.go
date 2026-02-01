@@ -1,7 +1,6 @@
 package ldap
 
 import (
-	"context"
 	"time"
 
 	"github.com/axelrindle/ldap-keycloak-proxy/config"
@@ -17,7 +16,6 @@ type Server struct {
 	keycloak keycloak.Keycloak
 
 	shouldRun bool
-	cancel    context.CancelFunc
 }
 
 func (s *Server) Init() error {
