@@ -5,8 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/axelrindle/ldap-keycloak-proxy/config"
@@ -66,6 +68,22 @@ func main() {
 		log.Fatal(err)
 	}
 	defer logger.Sync()
+
+	if healthcheck {
+		addressParts := strings.Split(config.Server.Address, ":")
+		if len(addressParts) != 2 {
+			logger.Fatal("invalid server address", zap.String("address", config.Server.Address))
+		}
+		port := addressParts[1]
+
+		conn, err := net.Dial("tcp", fmt.Sprintf("127.0.0.1:%s", port))
+		if err != nil {
+			log.Fatal("healthcheck failed", zap.Error(err))
+		}
+		conn.Close()
+
+		return
+	}
 
 	logger.Info(fmt.Sprintf("ldap base dn is %s", config.Ldap.BaseDn))
 
