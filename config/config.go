@@ -1,7 +1,8 @@
 package config
 
 type LoggingConfig struct {
-	Level string `env:"LOG_LEVEL" default:"info" validate:"oneof=debug info warn error"`
+	Level       string `env:"LOG_LEVEL" default:"info" validate:"oneof=debug info warn error"`
+	TraceServer bool   `env:"LOG_TRACE_SERVER" default:"false" validate:"boolean"`
 }
 
 type ServerConfig struct {

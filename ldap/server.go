@@ -35,8 +35,11 @@ func (s *Server) Init() error {
 }
 
 func (s *Server) Boot() {
-	// TODO: attach logger on TRACE
-	ldapserver.Logger = ldapserver.DiscardingLogger
+	if s.Config.Logging.TraceServer {
+		ldapserver.Logger = ServerLogger{logger: s.Logger.Sugar()}
+	} else {
+		ldapserver.Logger = ldapserver.DiscardingLogger
+	}
 
 	mux := ldapserver.NewRouteMux()
 	mux.Bind(s.handleBind)
