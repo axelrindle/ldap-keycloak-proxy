@@ -87,7 +87,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: binary-${{ matrix.arch }}
           path: dist/
@@ -138,7 +138,7 @@ jobs:
       packages: write
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: ${{ runner.temp }}/digests
           pattern: container-image-digests-*
@@ -187,7 +187,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         id: artifacts
         with:
           merge-multiple: true
