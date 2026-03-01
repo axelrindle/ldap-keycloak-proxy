@@ -52,7 +52,7 @@ jobs:
           GOOS: linux
           GOARCH: ${{ matrix.arch }}
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.arch }}
           path: dist/*
@@ -121,7 +121,7 @@ jobs:
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: container-image-digests-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
